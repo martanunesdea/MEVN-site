@@ -1,7 +1,7 @@
 // import the express framework
 import express from 'express';
 import bodyParser from 'body-parser';
-
+import { MongoClient } from 'mongodb';
 
 const products = [{
     id: '123',
@@ -104,45 +104,120 @@ app.use(bodyParser.json()); // parses the json object included in the request bo
                             // and adds a body to the request argument for our callbacks
 
 // endpoint to view all products
-app.get('/api/products', (req, res) => {
-    res.status(200).json(products);
+app.get('/api/products', async (req, res) => {
+  const client = await MongoClient.connect(
+    'mongodb://localhost:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  const db = client.db('vue-db');
+  const products = await db.collection('products').find({}).toArray();  
+  res.status(200).json(products);
+  client.close();
 });
 
 // endpoint to view cart products
-app.get('/api/users/:userId/cart', (req, res) => {
-    res.status(200).json(cartItems);
+app.get('/api/users/:userId/cart', async (req, res) => {
+  // get userId from URL params
+  const { userId } = req.params;
+
+  // initiate DB connection
+  const client = await MongoClient.connect(
+    'mongodb://localhost:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  const db = client.db('vue-db');
+
+  // find user in the users collection
+  user = await db.collection('users').findOne({ id: userId});
+  // ensure this user exists
+  if (!user) return res.status(404).json("Couldn't find user");
+  
+  // get all products
+  const products = await db.collection('products').find({}).toArray();
+  // get user products
+  const cartItemIds = user.cartItems;
+  
+  // look in the "products" collection for those products with same id as the cart item ids
+  const cartItems = cartItemIds.map( id => 
+    products.find(product => product.id === id));
+
+  res.status(200).json(cartItems);
+  client.close();
 });
 
-app.get('/api/products/:productId', (req, res) => {
-    const { productId } = req.params;
-    // find product whose id matches the productId from the URL parameter
-    const product = products.find((product) => product.id === productId);
-    // check if there was a match (and if there's anything to return)
-    if (product) {
+app.get('/api/products/:productId', async (req, res) => {
+  const { productId } = req.params;
+   
+  // initiate DB connection
+  const client = await MongoClient.connect(
+    'mongodb://localhost:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  const db = client.db('vue-db');
+
+  // retrieve product from database
+  const product = await db.collection('products').findOne({ id: productId });
+
+  // check if there was a match (and if there's anything to return)
+  if (product) {
         res.status(200).json(product);
-    } else {
+  } else {
         res.status(404).json('Could not find the product!');
-    }
+  }
+  client.close();
 })
 
 // endpoint for adding items to users cart
 app.post('/api/users/:userId/cart', (req, res) => {
-    // pulling this out of request body { productId: '123'}
-    const { productId }= req.body;
-    const product = products.find( product => product.id === productId);
-    if (product) {
-        cartItems.push(product);
-        res.status(200).json(cartItems);
-    } else {
-        res.status(404).json('Could not find product!');
-    }
+  // get user from URL parameters
+  const { userId } = req.params;
+  // pulling this out of request body { productId: '123'}
+  const { productId }= req.body;
+  // initiate DB connection
+  const client = await MongoClient.connect(
+    'mongodb://localhost:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  const db = client.db('vue-db');
+  await db.collection('users').updateOne({ id: userId}, {
+    $addToSet:  { cartItems: productId },   // adds new product Id without duplicates
+  } );
+  const user = await db.collection('users').findOne({ id: userId });
+  const cartItemIds = user.cartItems;
+  const cartItems = cartItemIds.map( id =>
+    products.find(product => product.id === id));
+  res.status(200).json(cartItems);
+  client.close();
 });
 
 // endpoint for removing items from user cart
 app.delete('/api/users/:userId/cart/:productId', (req, res) => {
-    const { productId } = req.params;
-    cartItems = cartItems.filter(product => product.id !== productId);
-    res.status(200).json(cartItems);
+  const { userId, productId } = req.params;
+
+  // initiate DB connection
+  const client = await MongoClient.connect(
+    'mongodb://localhost:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  const db = client.db('vue-db');
+
+  // update the user data
+  await db.collection('users').updateOne({ id: userId}, {
+    $pull: { cartItems: productId },
+  });
+  // send back updated array of users products
+  const user = await db.collection('users').findOne({ id: userId });
+  // get all products
+  const products = await db.collection('products').find({}).toArray();
+  // get ids of products in cart
+  const cartItemIds = user.cartItems;
+  
+  // update the cart items
+  const cartItems = cartItemIds.map( id =>
+    products.find(product => product.id === id));
+    
+  res.status(200).json(cartItems);
+  client.close()
 });
     
 app.listen(8000, () => {
