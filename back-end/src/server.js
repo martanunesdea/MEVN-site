@@ -106,7 +106,7 @@ app.use(bodyParser.json()); // parses the json object included in the request bo
 // endpoint to view all products
 app.get('/api/products', async (req, res) => {
   const client = await MongoClient.connect(
-    'mongodb://localhost:27017',
+    'mongodb://127.0.0.1:27017',
     { useNewUrlParser: true, useUnifiedTopology: true }
   );
   const db = client.db('vue-db');
@@ -122,7 +122,7 @@ app.get('/api/users/:userId/cart', async (req, res) => {
 
   // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://localhost:27017',
+    'mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb',
     { useNewUrlParser: true, useUnifiedTopology: true }
   );
   const db = client.db('vue-db');
@@ -150,7 +150,7 @@ app.get('/api/products/:productId', async (req, res) => {
    
   // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://localhost:27017',
+    'mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb',
     { useNewUrlParser: true, useUnifiedTopology: true }
   );
   const db = client.db('vue-db');
@@ -168,16 +168,14 @@ app.get('/api/products/:productId', async (req, res) => {
 })
 
 // endpoint for adding items to users cart
-app.post('/api/users/:userId/cart', (req, res) => {
+app.post('/api/users/:userId/cart',async (req, res) => {
   // get user from URL parameters
   const { userId } = req.params;
   // pulling this out of request body { productId: '123'}
   const { productId }= req.body;
   // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://localhost:27017',
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  );
+    'mongodb://127.0.0.1:27017/'  );
   const db = client.db('vue-db');
   await db.collection('users').updateOne({ id: userId}, {
     $addToSet:  { cartItems: productId },   // adds new product Id without duplicates
@@ -191,12 +189,12 @@ app.post('/api/users/:userId/cart', (req, res) => {
 });
 
 // endpoint for removing items from user cart
-app.delete('/api/users/:userId/cart/:productId', (req, res) => {
+app.delete('/api/users/:userId/cart/:productId', async (req, res) => {
   const { userId, productId } = req.params;
 
   // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://localhost:27017',
+    'mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb',
     { useNewUrlParser: true, useUnifiedTopology: true }
   );
   const db = client.db('vue-db');
