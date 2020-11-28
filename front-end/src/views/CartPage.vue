@@ -1,23 +1,24 @@
 <template>
     <div id="page-wrap">
         <h1>Shopping Cart</h1>
-        <ProductsList :products="cartItems" />
+        <ProductsGrid :products="cartItems" />
         <h3 id="total-price">Total: ${{ totalPrice}}</h3>
         <button id="checkout-button">Proceed to Checkout</button>
     </div>
 </template>
 
 <script>
-import { cartItems } from '../fake-data';
-import { ProductsList } from '../components/ProductsList.vue'
+import axios from 'axios';
+import ProductsGrid from '../components/ProductsGrid.vue'
+
 export default {
     name: 'CartPage',
     components: {
-        ProductsList,
+        ProductsGrid,
     },
     data() {
         return {
-            cartItems,
+            cartItems: [],
         }
     },
     computed: {
@@ -28,6 +29,11 @@ export default {
                 0,
             );
         }
+    },
+    async created() {
+      const result = await axios.get('/api/users/1/cart');
+      const cartItems = result.data;
+      this.cartItems = cartItems;
     }
 }
 </script>

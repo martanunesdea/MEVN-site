@@ -2,6 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { MongoClient } from 'mongodb';
+import path from 'path';
 
 const products = [{
     id: '123',
@@ -103,6 +104,9 @@ const app = express();
 app.use(bodyParser.json()); // parses the json object included in the request body
                             // and adds a body to the request argument for our callbacks
 
+// serve the assets directory whenever a request is received on the /images router
+app.use('/images', express.static(path.join(__dirname, '../assets'))); 
+
 // endpoint to view all products
 app.get('/api/products', async (req, res) => {
   const client = await MongoClient.connect(
@@ -122,13 +126,13 @@ app.get('/api/users/:userId/cart', async (req, res) => {
 
   // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb',
+    'mongodb://127.0.0.1:27017',
     { useNewUrlParser: true, useUnifiedTopology: true }
   );
   const db = client.db('vue-db');
 
   // find user in the users collection
-  user = await db.collection('users').findOne({ id: userId});
+  const user = await db.collection('users').findOne({ id: userId});
   // ensure this user exists
   if (!user) return res.status(404).json("Couldn't find user");
   
@@ -150,7 +154,7 @@ app.get('/api/products/:productId', async (req, res) => {
    
   // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb',
+    'mongodb://127.0.0.1:27017',
     { useNewUrlParser: true, useUnifiedTopology: true }
   );
   const db = client.db('vue-db');
@@ -194,7 +198,7 @@ app.delete('/api/users/:userId/cart/:productId', async (req, res) => {
 
   // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb',
+    'mongodb://127.0.0.1:27017',
     { useNewUrlParser: true, useUnifiedTopology: true }
   );
   const db = client.db('vue-db');
