@@ -4,101 +4,6 @@ import bodyParser from 'body-parser';
 import { MongoClient } from 'mongodb';
 import path from 'path';
 
-const products = [{
-    id: '123',
-    name: 'Running Shoes',
-    price: '60.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-1.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '234',
-    name: 'Basketball Shoes',
-    price: '120.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-2.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '345',
-    name: 'Bright Red Shoes',
-    price: '90.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-3.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '456',
-    name: 'Fancy Shoes',
-    price: '190.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-4.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '567',
-    name: 'Skateboard Shoes',
-    price: '75.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-5.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '678',
-    name: 'High Heels',
-    price: '200.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-6.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '789',
-    name: 'Dark Shoes',
-    price: '100.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-7.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '890',
-    name: 'Classic Shoes',
-    price: '40.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-8.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '901',
-    name: 'Plain Shoes',
-    price: '54.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-9.jpg',
-    averageRating: '5.0',
-  },
-  {
-    id: '901',
-    name: 'Teal Dress Shoes',
-    price: '330.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-10.jpg',
-    averageRating: '5.0',
-  },
-  {
-    id: '789',
-    name: 'Fancy Boots',
-    price: '230.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-11.jpg',
-    averageRating: '5.0',
-  }, {
-    id: '890',
-    name: 'Gold Shoes',
-    price: '180.00',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim quam. Mauris nisl tellus, fringilla sed cursus eu, convallis non diam. Mauris quis fringilla nunc. Aenean leo lacus, lobortis sit amet venenatis a, aliquet tristique erat. Etiam laoreet mauris ut dapibus tincidunt. Pellentesque non ex at nisl ornare aliquam sed non ante. Nam lobortis magna id massa cursus, sit amet condimentum metus facilisis. Donec eu tortor at est tempor cursus et sed velit. Morbi rutrum elementum est vitae fringilla. Phasellus dignissim purus turpis, ac varius enim auctor vulputate. In ullamcorper vestibulum mauris. Nulla malesuada pretium mauris, lobortis eleifend dolor iaculis vitae.',
-    imageUrl: '/images/shoes-12.jpg',
-    averageRating: '5.0',
-  }];
-  
-  export let cartItems = [
-    products[0],
-    products[2],
-    products[3],
-  ];
-
-
 // create app object
 const app = express();
 app.use(bodyParser.json()); // parses the json object included in the request body
@@ -116,6 +21,73 @@ app.get('/api/products', async (req, res) => {
   const db = client.db('vue-db');
   const products = await db.collection('products').find({}).toArray();  
   res.status(200).json(products);
+  client.close();
+});
+
+// endpoint to view all products
+app.get('/api/orders', async (req, res) => {
+  const client = await MongoClient.connect(
+    'mongodb://127.0.0.1:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  const db = client.db('vue-db');
+  const products = await db.collection('orders').find({}).toArray();  
+  res.status(200).json(products);
+  client.close();
+});
+
+
+
+// endpoint to view orders with user, phone number
+app.get('/api/orders/:name', async (req, res) => {
+  const username = req.params;
+  //const usernumber = req.params;
+
+  const client = await MongoClient.connect(
+    'mongodb://127.0.0.1:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  const db = client.db('vuedb');
+
+  const orders = await db.collection('orders').findOne({name: username});  
+  /*if (orders.length == 0)
+    return res.status(404).json("Couldn't find order");*/ 
+
+  res.status(200).json(orders);
+  client.close();
+});
+
+
+// endpoint for getting orders from user 
+app.post('/api/orders/user',async (req, res) => {
+  // initiate DB connection
+  const client = await MongoClient.connect(
+    'mongodb://127.0.0.1:27017/',
+    { useNewUrlParser: true, useUnifiedTopology: true }  );
+  const db = client.db('vue-db');
+  const orders = await db.collection('orders').find({ name: req.body.name, number: req.body.number }).toArray();
+  res.status(200).json(orders);
+  client.close();
+});
+
+
+// endpoint for adding items to users cart
+app.post('/api/orders',async (req, res) => {
+  // initiate DB connection
+  const client = await MongoClient.connect(
+    'mongodb://127.0.0.1:27017/',
+    { useNewUrlParser: true, useUnifiedTopology: true }  );
+  const db = client.db('vue-db');
+  await db.collection('orders').insertOne({ 
+   id: req.body.id,
+   name: req.body.name,
+   number: req.body.number,
+   lesson: req.body.lesson,
+   spaces: req.body.spaces,
+  });
+
+  const order = await db.collection('orders').findOne({ id: req.body.id });
+  res.status(200).json(order);
   client.close();
 });
 
@@ -149,7 +121,7 @@ app.get('/api/users/:userId/cart', async (req, res) => {
   client.close();
 });
 
-app.get('/api/products/:productId', async (req, res) => {
+app.get('/api/orders_new/:id', async (req, res) => {
   const { productId } = req.params;
    
   // initiate DB connection
@@ -160,7 +132,7 @@ app.get('/api/products/:productId', async (req, res) => {
   const db = client.db('vue-db');
 
   // retrieve product from database
-  const product = await db.collection('products').findOne({ id: productId });
+  const product = await db.collection('orders').findOne({ id: productId });
 
   // check if there was a match (and if there's anything to return)
   if (product) {
@@ -185,6 +157,9 @@ app.post('/api/users/:userId/cart',async (req, res) => {
     $addToSet:  { cartItems: productId },   // adds new product Id without duplicates
   } );
   const user = await db.collection('users').findOne({ id: userId });
+   // get all products
+   const products = await db.collection('products').find({}).toArray();
+  
   const cartItemIds = user.cartItems;
   const cartItems = cartItemIds.map( id =>
     products.find(product => product.id === id));
