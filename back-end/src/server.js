@@ -24,73 +24,6 @@ app.get('/api/products', async (req, res) => {
   client.close();
 });
 
-// endpoint to view all products
-app.get('/api/orders', async (req, res) => {
-  const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017',
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  );
-  const db = client.db('vue-db');
-  const products = await db.collection('orders').find({}).toArray();  
-  res.status(200).json(products);
-  client.close();
-});
-
-
-
-// endpoint to view orders with user, phone number
-app.get('/api/orders/:name', async (req, res) => {
-  const username = req.params;
-  //const usernumber = req.params;
-
-  const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017',
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  );
-  const db = client.db('vuedb');
-
-  const orders = await db.collection('orders').findOne({name: username});  
-  /*if (orders.length == 0)
-    return res.status(404).json("Couldn't find order");*/ 
-
-  res.status(200).json(orders);
-  client.close();
-});
-
-
-// endpoint for getting orders from user 
-app.post('/api/orders/user',async (req, res) => {
-  // initiate DB connection
-  const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017/',
-    { useNewUrlParser: true, useUnifiedTopology: true }  );
-  const db = client.db('vue-db');
-  const orders = await db.collection('orders').find({ name: req.body.name, number: req.body.number }).toArray();
-  res.status(200).json(orders);
-  client.close();
-});
-
-
-// endpoint for adding items to users cart
-app.post('/api/orders',async (req, res) => {
-  // initiate DB connection
-  const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017/',
-    { useNewUrlParser: true, useUnifiedTopology: true }  );
-  const db = client.db('vue-db');
-  await db.collection('orders').insertOne({ 
-   id: req.body.id,
-   name: req.body.name,
-   number: req.body.number,
-   lesson: req.body.lesson,
-   spaces: req.body.spaces,
-  });
-
-  const order = await db.collection('orders').findOne({ id: req.body.id });
-  res.status(200).json(order);
-  client.close();
-});
-
 // endpoint to view cart products
 app.get('/api/users/:userId/cart', async (req, res) => {
   // get userId from URL params
@@ -121,27 +54,21 @@ app.get('/api/users/:userId/cart', async (req, res) => {
   client.close();
 });
 
-app.get('/api/orders_new/:id', async (req, res) => {
+app.get('/api/products/:productId', async (req, res) => {
   const { productId } = req.params;
-   
-  // initiate DB connection
   const client = await MongoClient.connect(
-    'mongodb://127.0.0.1:27017',
-    { useNewUrlParser: true, useUnifiedTopology: true }
+    'mongodb://localhost:27017',
+    { useNewUrlParser: true, useUnifiedTopology: true },
   );
   const db = client.db('vue-db');
-
-  // retrieve product from database
-  const product = await db.collection('orders').findOne({ id: productId });
-
-  // check if there was a match (and if there's anything to return)
+  const product = await db.collection('products').findOne({ id: productId });
   if (product) {
-        res.status(200).json(product);
+      res.status(200).json(product);
   } else {
-        res.status(404).json('Could not find the product!');
+      res.status(404).json('Could not find the product!');
   }
   client.close();
-})
+});
 
 // endpoint for adding items to users cart
 app.post('/api/users/:userId/cart',async (req, res) => {
